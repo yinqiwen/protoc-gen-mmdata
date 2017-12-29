@@ -12,7 +12,7 @@ A  protocol buffer3 compiler plugin to generater source file for [mmdata](https:
 
 ## Usage
 - go get -t -u github.com/yinqiwen/protoc-gen-mmdata
-- protoc --mmdata_out=./ -I`<protoc-gen-mmdata_dir>` -I`<protobuf_include_dir>` mydata.proto
+- protoc -plugin=$GOPATH/bin/protoc-gen-mmdata --mmdata_out=./ -I`<protoc-gen-mmdata_dir>` -I`<protobuf_include_dir>` mydata.proto
 
 ## Example
 ```proto
