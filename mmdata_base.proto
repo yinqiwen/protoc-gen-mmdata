@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+   bool Key = 51234;
+   bool Value = 51235;
+}
