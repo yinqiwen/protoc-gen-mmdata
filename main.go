@@ -1,7 +1,6 @@
 package main
 
 import (
-	"hash/crc64"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	g := &Generator{}
+
 	data, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		log.Fatalf("reading input:%v", err)
@@ -21,21 +20,20 @@ func main() {
 	if err := proto.Unmarshal(data, &request); err != nil {
 		log.Fatalf("parsing input proto:%v", err)
 	}
-	hashData, _ := proto.Marshal(&request)
-	crcTable := crc64.MakeTable(123456789)
-	g.HashValue = crc64.Checksum(hashData, crcTable)
 
 	if len(request.FileToGenerate) == 0 {
 		log.Fatalf("no files to generate")
 	}
 
 	for _, file := range request.ProtoFile {
+		g := &Generator{}
 		if !g.Verify(file) {
 			continue
 		}
 		g.BuildTypeNameMap(file)
 		g.DumpHeader(file.GetName())
 		tab, tabs := g.DumpNamespaceBegin(*file.Package)
+		g.DumpTemplates(tab)
 		// log.Printf("Name:%v", *(file.Name))
 		// log.Printf("Package:%v", *file.Package)
 		// log.Printf("MessageType:%v", len(file.MessageType))
@@ -44,8 +42,9 @@ func main() {
 			g.DumpMessage(msg, tab)
 		}
 		g.DumpNamespaceEnd(tabs)
+		g.Finish()
+		g.DumpFile()
 	}
-	g.Finish()
-	g.DumpFile()
+
 	//log.Printf("\n%s", g.OutputBuffer.String())
 }
