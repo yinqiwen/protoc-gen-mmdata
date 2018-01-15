@@ -15,6 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("reading input:%v", err)
 	}
+
 	var request plugin.CodeGeneratorRequest // The input.
 	//var response plugin.CodeGeneratorResponse // The output.
 	if err := proto.Unmarshal(data, &request); err != nil {
