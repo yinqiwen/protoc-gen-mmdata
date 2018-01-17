@@ -34,10 +34,6 @@ func main() {
 		g.BuildTypeNameMap(file)
 		g.DumpHeader(file.GetName())
 		tab, tabs := g.DumpNamespaceBegin(*file.Package)
-		g.DumpTemplates(tab)
-		// log.Printf("Name:%v", *(file.Name))
-		// log.Printf("Package:%v", *file.Package)
-		// log.Printf("MessageType:%v", len(file.MessageType))
 
 		for _, msg := range file.MessageType {
 			g.DumpMessage(msg, tab)

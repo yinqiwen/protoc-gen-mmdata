@@ -28,7 +28,7 @@ type Generator struct {
 	//keyField, valueField *descriptor.FieldDescriptorProto
 	hashEntryMessages map[string]KeyValueFiled
 	packageName       string
-	entryClassInfos   []string
+	//entryClassInfos   []string
 }
 
 func (g *Generator) Verify(file *descriptor.FileDescriptorProto) bool {
@@ -108,7 +108,6 @@ func (g *Generator) NestMarshal(msg *descriptor.DescriptorProto) []byte {
 func (g *Generator) DumpFile() {
 	ioutil.WriteFile(g.dumpFileName, g.OutputBuffer.Bytes(), 0666)
 	ioutil.WriteFile(g.dumpCppName, g.CppBuffer.Bytes(), 0666)
-	ioutil.WriteFile(g.dumpDescName, []byte(strings.Join(g.entryClassInfos, "\n")), 0666)
 }
 
 func (g *Generator) TypeName(name string) string {
@@ -172,13 +171,6 @@ func (g *Generator) DumpNamespaceBegin(name string) (string, []string) {
 		}
 	}
 	return tab, tabs
-}
-
-func (g *Generator) DumpTemplates(tab string) {
-	// fmt.Fprintf(&g.OutputBuffer, "%stemplate<typename T>\n", tab)
-	// fmt.Fprintf(&g.OutputBuffer, "%sstd::ostream& operator<<(std::ostream& out, const typename boost::container::vector<T, mmdata::Allocator<T> >& v){\n", tab)
-	// fmt.Fprintf(&g.OutputBuffer, "%s    return mmdata::operator<<(out, v);\n", tab)
-	// fmt.Fprintf(&g.OutputBuffer, "%s}\n\n", tab)
 }
 
 func (g *Generator) DumpNamespaceEnd(tabs []string) {
@@ -527,13 +519,6 @@ func (g *Generator) DumpMessage(msg *descriptor.DescriptorProto, currentTAB stri
 			builderName = g.packageName + "." + builderName
 		}
 		fmt.Fprintf(&g.CppBuffer, "%sstatic mmdata::HelperFuncRegister %s_instance(\"%s\", %s::Build,%s::TestMemory, %s::GetHash());\n", currentTAB, msg.GetName(), builderName, builderClass, builderClass, currentClass)
-
-		//kv.Key.GetTypeName()
-		entryInfo := currentClass
-		if len(g.packageName) > 0 {
-			entryInfo = g.packageName + "." + entryInfo
-		}
-		g.entryClassInfos = append(g.entryClassInfos, entryInfo)
 	}
 
 	return nil
