@@ -16,8 +16,8 @@ func main() {
 		log.Fatalf("reading input:%v", err)
 	}
 
-	var request plugin.CodeGeneratorRequest // The input.
-	//var response plugin.CodeGeneratorResponse // The output.
+	var request plugin.CodeGeneratorRequest   // The input.
+	var response plugin.CodeGeneratorResponse // The output.
 	if err := proto.Unmarshal(data, &request); err != nil {
 		log.Fatalf("parsing input proto:%v", err)
 	}
@@ -40,8 +40,18 @@ func main() {
 		}
 		g.DumpNamespaceEnd(tabs)
 		g.Finish()
-		g.DumpFile()
-	}
+		//g.DumpFile()
+		f := &plugin.CodeGeneratorResponse_File{}
+		f.Name = proto.String(g.dumpFileName)
+		f.Content = proto.String(g.OutputBuffer.String())
+		response.File = append(response.File, f)
 
+		sf := &plugin.CodeGeneratorResponse_File{}
+		sf.Name = proto.String(g.dumpCppName)
+		sf.Content = proto.String(g.CppBuffer.String())
+		response.File = append(response.File, sf)
+	}
+	rdata, _ := proto.Marshal(&response)
+	os.Stdout.Write(rdata)
 	//log.Printf("\n%s", g.OutputBuffer.String())
 }
